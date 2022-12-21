@@ -1,5 +1,5 @@
 {
-  "name": "halfblindchess.co",
+  "name": "halfblindchess.com",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -16,6 +16,9 @@
     "@trpc/next": "^10.0.0",
     "@trpc/react-query": "^10.0.0",
     "@trpc/server": "^10.0.0",
+    "halfblindchess": "^1.0.4",
+    "halfblindchessground": "^0.1.1",
+    "nanoid": "^4.0.0",
     "next": "13.0.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -23,6 +26,7 @@
     "zod": "^3.18.0"
   },
   "devDependencies": {
+    "@types/chess.js": "0.11.0",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
