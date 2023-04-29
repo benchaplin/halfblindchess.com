@@ -8,10 +8,10 @@ export default function Nav() {
           <Link to="/">Home</Link>
         </li>
         <li className="mb-1 text-indigo-700 hover:underline">
-          <Link to="/">About</Link>
+          <Link to="/game">Play</Link>
         </li>
-        <li className="text-indigo-700 hover:underline">
-          <Link to="/play">Play</Link>
+        <li className="mb-1 text-indigo-700 hover:underline">
+          <Link to="/">About</Link>
         </li>
       </ul>
     </div>
