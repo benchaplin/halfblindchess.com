@@ -18,7 +18,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "halfblindchess": "^1.0.4",
+    "halfblindchess": "^1.0.5",
     "socket.io": "^4.6.1"
   }
 }

@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 
 export default function Nav() {
   return (
-    <div className="text-right" style={{ marginRight: 30, marginTop: 52 }}>
+    <div className="text-right" style={{ marginRight: 30 }}>
+      <img src="../hbc.png" className="inline mb-4" width="35" alt="" />
       <ul>
         <li className="mb-1 text-indigo-700 hover:underline">
           <Link to="/">Home</Link>
@@ -11,7 +12,7 @@ export default function Nav() {
           <Link to="/game">Play</Link>
         </li>
         <li className="mb-1 text-indigo-700 hover:underline">
-          <Link to="/">About</Link>
+          <Link to="/about">About</Link>
         </li>
       </ul>
     </div>

@@ -10,6 +10,7 @@ import "../styles/chessground.cburnett.css";
 import App from "./App";
 import Home from "./Home";
 import Game from "./Game";
+import About from "./About";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: "/game",
         element: <Game />,
+      },
+      {
+        path: "/about",
+        element: <About />,
       },
     ],
   },

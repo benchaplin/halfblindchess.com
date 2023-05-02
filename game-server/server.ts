@@ -1,7 +1,9 @@
 import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
-import { HalfBlindChess } from "halfblindchess";
+import { HalfBlindChess, HalfBlindMove } from "halfblindchess";
+import { StringifiableGameState } from "../types/gameTypes";
+import { Color } from 'halfblindchessground/types';
 
 const app = express();
 const server = http.createServer(app);
@@ -17,24 +19,29 @@ const hbchess = new HalfBlindChess();
 
 io.on('connection', (socket: Socket) => {
     console.log('A user connected.');
-    console.log(`emitting gameState, color: ${toColor(hbchess)}, fen: ${hbchess.fen()}`)
-    socket.emit('gameState', {
+    const gameState: StringifiableGameState = {
         fen: hbchess.fen(),
         dests: JSON.stringify(Array.from(toDests(hbchess))),
         color: toColor(hbchess),
-    })
+        lastHalfBlindMove: getLastHalfBlindMove(hbchess)
+    };
+    console.log(`emitting gameState: ${JSON.stringify(gameState)}`);
+    socket.emit('gameState', gameState);
 
     socket.on('move', ({ orig, dest }) => {
         console.log(`received move: ${orig} to ${dest}`);
         const moveRes = hbchess.move({ from: orig, to: dest });
         if (moveRes) {
             console.log(`good moveRes: ${JSON.stringify(moveRes)}`)
-            console.log(`emitting gameState, color: ${toColor(hbchess)}, fen: ${hbchess.fen()}`)
-            socket.emit('gameState', { // dupe code
+            // dupe code
+            const gameState: StringifiableGameState = {
                 fen: hbchess.fen(),
                 dests: JSON.stringify(Array.from(toDests(hbchess))),
-                color: toColor(hbchess)
-            })
+                color: toColor(hbchess),
+                lastHalfBlindMove: getLastHalfBlindMove(hbchess)
+            };
+            console.log(`emitting gameState: ${JSON.stringify(gameState)}`);
+            socket.emit('gameState', gameState); // optimize: updateGameState
         } else {
             console.log(`bad moveRes: ${JSON.stringify(moveRes)}`)
         }
@@ -62,6 +69,13 @@ function toDests(hbchess: HalfBlindChess): Map<string, string[]> {
     return dests;
 }
 
-function toColor(hbchess: HalfBlindChess): string {
+function toColor(hbchess: HalfBlindChess): Color {
     return hbchess.turn() === "w" ? "white" : "black";
+}
+
+function getLastHalfBlindMove(hbchess: HalfBlindChess): HalfBlindMove {
+    const history = hbchess.history({ verbose: true });
+    const lastMove = history[history.length - 1];
+
+    return { ...lastMove, halfBlind: hbchess.lastMoveHalfBlind() };
 }

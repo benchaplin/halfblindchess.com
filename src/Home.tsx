@@ -1,11 +1,11 @@
 import { useRef, useEffect } from "react";
-import { setupBoard } from "./utils/hbcgHelpers";
+import { setupBoardDefault } from "./utils/hbcgHelpers";
 
 export default function Home() {
   const board = useRef(null);
 
   useEffect(() => {
-    setupBoard(board.current!);
+    setupBoardDefault(board.current!);
   }, []);
 
   return (
