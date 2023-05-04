@@ -26,7 +26,6 @@ app.use(morganMiddleware);
 app.get("/game", (_, res: Response) => {
     res.send(Array.from(db.keys()));
 });
-
 app.post("/game", (_, res: Response) => {
     const gameId = uuidv4().split("-")[0];
     db.set(gameId, new HalfBlindChess());

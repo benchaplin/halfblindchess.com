@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import ErrorAlert from "./ErrorAlert";
 
 export default function Lobby() {
     const queryClient = useQueryClient();
-    const { data, error } = useQuery("games", () =>
+    const { data: games, error: gamesError } = useQuery("games", () =>
         fetch("http://localhost:3000/game").then((res) => res.json())
     );
     const {
@@ -24,7 +25,7 @@ export default function Lobby() {
     return (
         <div>
             <button
-                className="bg-stone-600 hover:bg-stone-900 text-white rounded p-2"
+                className="mt-3 bg-amber-600 hover:bg-amber-800 text-white rounded py-2 px-3"
                 onClick={() => createNewGame()}
                 disabled={isCreatingNewGame}
             >
@@ -32,27 +33,48 @@ export default function Lobby() {
             </button>
             {newGameData && (
                 <p className="mt-2">
+                    <CopyToClipboard
+                        text={`http://halfblindchess.com/game/${newGameData.gameId}`}
+                        onCopy={() =>
+                            document
+                                .querySelector(".copy-icon")
+                                .classList.add("animate-copied")
+                        }
+                    >
+                        <img
+                            className="hover:cursor-pointer inline mr-2 copy-icon"
+                            src="../copy.svg"
+                            width="25"
+                            alt="copy"
+                        />
+                    </CopyToClipboard>
                     <Link
                         className="text-indigo-700 hover:underline"
                         to={`/game/${newGameData.gameId}`}
                     >
-                        http://halfblindchess.com/game/{newGameData.gameId}
+                        https://halfblindchess.com/game/{newGameData.gameId}
                     </Link>
                 </p>
             )}
+            {newGameError && (
+                <ErrorAlert>
+                    Something went wrong creating a new game.
+                </ErrorAlert>
+            )}
+            <hr className="my-10 border-black" />
             <h2 className="text-l my-5">Games in progress:</h2>
             <ul className="list-disc">
-                {data?.map((gameId: string) => (
+                {games?.map((gameId: string) => (
                     <li key={gameId}>
                         <Link
                             className="text-indigo-700 hover:underline"
                             to={`/game/${gameId}`}
                         >
-                            {gameId}
+                            https://halfblindchess.com/game/{gameId}
                         </Link>
                     </li>
                 ))}
-                {error && (
+                {gamesError && (
                     <ErrorAlert>
                         Something went wrong fetching games.
                     </ErrorAlert>
