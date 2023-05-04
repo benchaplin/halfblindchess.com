@@ -13,7 +13,7 @@ export default function About() {
                 <li className="mb-2">
                     <a
                         href="https://github.com/benchaplin/halfblindchess.com"
-                        className="text-indigo-700 hover:underline"
+                        className="link"
                     >
                         https://github.com/benchaplin/halfblindchess.com
                     </a>{" "}
@@ -22,7 +22,7 @@ export default function About() {
                 <li className="mb-2">
                     <a
                         href="https://github.com/benchaplin/halfblindchess"
-                        className="text-indigo-700 hover:underline"
+                        className="link"
                     >
                         https://github.com/benchaplin/halfblindchess
                     </a>{" "}
@@ -31,15 +31,12 @@ export default function About() {
                 <li className="mb-2">
                     <a
                         href="https://github.com/benchaplin/halfblindchessground"
-                        className="text-indigo-700 hover:underline"
+                        className="link"
                     >
                         https://github.com/benchaplin/halfblindchessground
                     </a>{" "}
                     - the chess board UI, forked from{" "}
-                    <a
-                        href="https://lichess.org"
-                        className="text-indigo-700 hover:underline"
-                    >
+                    <a href="https://lichess.org" className="link">
                         lichess.org
                     </a>
                     's chessground

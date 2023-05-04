@@ -25,7 +25,7 @@ export default function Lobby() {
     return (
         <div>
             <button
-                className="mt-3 bg-amber-600 hover:bg-amber-800 text-white rounded py-2 px-3"
+                className="bg-amber-600 hover:bg-amber-800 text-white rounded py-2 px-3"
                 onClick={() => createNewGame()}
                 disabled={isCreatingNewGame}
             >
@@ -48,10 +48,7 @@ export default function Lobby() {
                             alt="copy"
                         />
                     </CopyToClipboard>
-                    <Link
-                        className="text-indigo-700 hover:underline"
-                        to={`/game/${newGameData.gameId}`}
-                    >
+                    <Link className="link" to={`/game/${newGameData.gameId}`}>
                         https://halfblindchess.com/game/{newGameData.gameId}
                     </Link>
                 </p>
@@ -66,10 +63,7 @@ export default function Lobby() {
             <ul className="list-disc">
                 {games?.map((gameId: string) => (
                     <li key={gameId}>
-                        <Link
-                            className="text-indigo-700 hover:underline"
-                            to={`/game/${gameId}`}
-                        >
+                        <Link className="link" to={`/game/${gameId}`}>
                             https://halfblindchess.com/game/{gameId}
                         </Link>
                     </li>
