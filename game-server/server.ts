@@ -34,24 +34,24 @@ app.post("/game", (_, res: Response) => {
 });
 
 io.on("connection", (socket: Socket) => {
-    console.log("A user connected.");
+    logger.info("A user connected.");
     socket.on("game", ({ gameId }) => {
         emitGameState(gameId);
     });
 
     socket.on("move", ({ gameId, orig, dest }) => {
-        console.log(`received move for ${gameId}: ${orig} to ${dest}`);
+        logger.info(`received move for ${gameId}: ${orig} to ${dest}`);
         const moveRes = db.get(gameId).move({ from: orig, to: dest });
         if (moveRes) {
-            console.log(`good moveRes for ${gameId}: ${JSON.stringify(moveRes)}`)
+            logger.info(`good moveRes for ${gameId}: ${JSON.stringify(moveRes)}`)
             emitGameState(gameId); // optimize: updateGameState
         } else {
-            console.log(`bad moveRes for ${gameId}: ${JSON.stringify(moveRes)}`)
+            logger.info(`bad moveRes for ${gameId}: ${JSON.stringify(moveRes)}`)
         }
     });
 
     socket.on("disconnect", () => {
-        console.log("A user disconnected.");
+        logger.info("A user disconnected.");
     });
 });
 
@@ -62,10 +62,10 @@ function emitGameState(gameId: string) {
         dests: JSON.stringify(Array.from(toDests(hbchess))),
         color: toColor(hbchess)
     };
-    console.log(`emitting gameState for ${gameId}: ${JSON.stringify(gameState)}`);
+    logger.info(`emitting gameState for ${gameId}: ${JSON.stringify(gameState)}`);
     io.emit("gameState", gameState);
 }
 
 server.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
+    logger.info(`Server is listening on port ${PORT}`);
 });

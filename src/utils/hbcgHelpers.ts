@@ -77,7 +77,6 @@ export function setupBoard(ref: HTMLElement, gameState: GameState): Api {
         const square = gameState.fen.substring(1, 3) as Key;
         const piece = cg.state.pieces.get(square);
         cg.state.pieces.set(square, { ...piece, halfBlind: true });
-        console.log(cg.state.pieces)
     }
     return cg;
 }
