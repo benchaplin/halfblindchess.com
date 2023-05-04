@@ -1,19 +1,24 @@
 import { useRef, useEffect } from "react";
 import { setupBoard, setupAfterMoveEvt } from "./utils/hbcgHelpers";
 import { socket } from "./socket";
+import { useParams } from "react-router-dom";
 
 export default function Game() {
+    const { gameId } = useParams();
     const board = useRef(null);
 
     useEffect(() => {
         console.log("connecting");
         socket.connect();
+        socket.emit("game", { gameId });
 
         socket.on("gameState", (gameState) => {
             console.log(`received gameState: ${JSON.stringify(gameState)}`);
             const dests = new Map(JSON.parse(gameState.dests));
-            const cg = setupBoard(board.current!, { ...gameState, dests });
-            setupAfterMoveEvt(cg, socket);
+            if (board.current !== null) {
+                const cg = setupBoard(board.current, { ...gameState, dests });
+                setupAfterMoveEvt(cg, socket, gameId);
+            }
         });
 
         return () => {
