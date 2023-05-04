@@ -1,8 +1,10 @@
-import express from "express";
+import express, { Response } from "express";
 import http from "http";
 import cors from "cors";
+import { logger, morganMiddleware } from "./logger";
 import { Server, Socket } from "socket.io";
 import { HalfBlindChess } from "halfblindchess";
+import { v4 as uuidv4 } from 'uuid';
 import { StringifiableGameState } from "../types/gameTypes";
 import { toColor, toDests } from "./hbcHelpers";
 
@@ -17,13 +19,19 @@ const io = new Server(server, {
 const PORT = 3000;
 
 const db = new Map();
-db.set("812dj13f", new HalfBlindChess());
-db.set("affe9jk3", new HalfBlindChess());
 
 app.use(cors());
+app.use(morganMiddleware);
 
-app.get("/game", (req, res) => {
+app.get("/game", (_, res: Response) => {
     res.send(Array.from(db.keys()));
+});
+
+app.post("/game", (_, res: Response) => {
+    const gameId = uuidv4().split("-")[0];
+    db.set(gameId, new HalfBlindChess());
+    logger.info(`created game with ID ${gameId}`);
+    res.send({ gameId });
 });
 
 io.on("connection", (socket: Socket) => {
@@ -33,13 +41,13 @@ io.on("connection", (socket: Socket) => {
     });
 
     socket.on("move", ({ gameId, orig, dest }) => {
-        console.log(`received move: ${orig} to ${dest}`);
+        console.log(`received move for ${gameId}: ${orig} to ${dest}`);
         const moveRes = db.get(gameId).move({ from: orig, to: dest });
         if (moveRes) {
-            console.log(`good moveRes: ${JSON.stringify(moveRes)}`)
+            console.log(`good moveRes for ${gameId}: ${JSON.stringify(moveRes)}`)
             emitGameState(gameId); // optimize: updateGameState
         } else {
-            console.log(`bad moveRes: ${JSON.stringify(moveRes)}`)
+            console.log(`bad moveRes for ${gameId}: ${JSON.stringify(moveRes)}`)
         }
     });
 
@@ -55,7 +63,7 @@ function emitGameState(gameId: string) {
         dests: JSON.stringify(Array.from(toDests(hbchess))),
         color: toColor(hbchess)
     };
-    console.log(`emitting gameState: ${JSON.stringify(gameState)}`);
+    console.log(`emitting gameState for ${gameId}: ${JSON.stringify(gameState)}`);
     io.emit("gameState", gameState);
 }
 
