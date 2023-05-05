@@ -2,7 +2,7 @@ import { Api } from "halfblindchessground/api";
 import { Color, Key } from "halfblindchessground/types";
 import { Chessground } from "halfblindchessground";
 import { Socket } from "socket.io-client";
-import { HalfBlindChess } from "halfblindchess";
+import { HalfBlindChess, Move, Square } from "halfblindchess";
 import { GameState } from "../../types/gameTypes";
 
 export function setupBoardDefault(ref: HTMLElement) {
@@ -26,8 +26,8 @@ export function setupBoardDefault(ref: HTMLElement) {
     });
 }
 
-export function playOtherSideDefault(cg: Api, chess: any) {
-    return (orig, dest) => {
+export function playOtherSideDefault(cg: Api, chess: HalfBlindChess) {
+    return (orig: Square, dest: Square) => {
         const move = chess.move({ from: orig, to: dest });
         cg.set({
             halfBlindMove: move.halfBlind
@@ -46,16 +46,17 @@ export function playOtherSideDefault(cg: Api, chess: any) {
     };
 }
 
-function toDests(chess: any): Map<Key, Key[]> {
+function toDests(chess: HalfBlindChess): Map<Key, Key[]> {
     const dests = new Map();
-    chess.SQUARES.forEach(s => {
-        const ms = chess.moves({ square: s, verbose: true });
-        if (ms.length) dests.set(s, ms.map(m => m.to));
+    chess.SQUARES.forEach((square: Square) => {
+        const moves = chess.moves({ square, verbose: true });
+        if (moves.length)
+            dests.set(square, moves.map((move: Move) => move.to));
     });
     return dests;
 }
 
-function toColor(chess: any): Color {
+function toColor(chess: HalfBlindChess): Color {
     return (chess.turn() === 'w') ? 'white' : 'black';
 }
 
