@@ -36,6 +36,7 @@ app.post("/game", (_, res: Response) => {
 io.on("connection", (socket: Socket) => {
     logger.info("A user connected.");
     socket.on("game", ({ gameId }) => {
+        socket.join(gameId);
         emitGameState(gameId);
     });
 
@@ -63,7 +64,7 @@ function emitGameState(gameId: string) {
         color: toColor(hbchess)
     };
     logger.info(`emitting gameState for ${gameId}: ${JSON.stringify(gameState)}`);
-    io.emit("gameState", gameState);
+    io.to(gameId).emit("gameState", gameState);
 }
 
 server.listen(PORT, () => {
