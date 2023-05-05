@@ -60,9 +60,9 @@ function toColor(chess: any): Color {
 }
 
 export function setupBoard(ref: HTMLElement, gameState: GameState): Api {
-    const realFen = gameState.fen.startsWith("h") ? gameState.fen.substring(4) : gameState.fen;
+    const normalFen = gameState.fen.split(" ").slice(1).join(" ");
     const cg = Chessground(ref, {
-        fen: realFen,
+        fen: normalFen,
         turnColor: gameState.color,
         movable: {
             color: gameState.color,
@@ -73,10 +73,11 @@ export function setupBoard(ref: HTMLElement, gameState: GameState): Api {
             showGhost: true,
         }
     });
-    if (gameState.fen.startsWith("h")) {
-        const square = gameState.fen.substring(1, 3) as Key;
-        const piece = cg.state.pieces.get(square);
-        cg.state.pieces.set(square, { ...piece, halfBlind: true });
+
+    if (gameState.fen.split(" ")[0].length > 1) { // half-blind move
+        const fromSquare = gameState.fen.substring(0, 2) as Key;
+        const piece = cg.state.pieces.get(fromSquare);
+        cg.state.pieces.set(fromSquare, { ...piece, halfBlind: true });
     }
     return cg;
 }

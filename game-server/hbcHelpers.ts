@@ -17,10 +17,3 @@ export function toDests(hbchess: HalfBlindChess): Map<Key, Key[]> {
 export function toColor(hbchess: HalfBlindChess): Color {
     return hbchess.turn() === "w" ? "white" : "black";
 }
-
-export function getLastHalfBlindMove(hbchess: HalfBlindChess): HalfBlindMove {
-    const history = hbchess.history({ verbose: true });
-    const lastMove = history[history.length - 1];
-
-    return { ...lastMove, halfBlind: hbchess.lastMoveHalfBlind() };
-}
