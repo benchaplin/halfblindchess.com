@@ -4,7 +4,7 @@ https://halfblindchess.com is a free, open-source chess server for the half-blin
 
 ## Development
 
-The codebase is made of of two sections:
+The codebase has two services:
 
 1. the React (Vite) frontend in `src/`
 
@@ -20,3 +20,28 @@ The codebase is made of of two sections:
     npm install
     npm run dev
     ```
+
+Develop the app at http://localhost:5173.
+
+## Deployment
+
+### Dependencies
+
+-   Linux distro with systemd/systemctl
+-   [node@18](https://nodejs.org/en/download)
+-   [redis](https://redis.io/docs/getting-started/installation/install-redis-on-linux/)
+-   [nginx](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/)
+
+    -   you must [configure nginx](https://docs.nginx.com/nginx/admin-guide/web-server/web-server/) with `root /var/www/halfblindchess.com/public_html;`
+
+-   [pm2](https://pm2.io/docs/runtime/guide/installation/)
+
+### Deploy
+
+Clone the code and run the deploy script:
+
+```
+git clone https://github.com/benchaplin/halfblindchess.com.git
+chmod +x ./scripts/deploy.sh
+./scripts/deploy.sh
+```
