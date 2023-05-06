@@ -21,18 +21,18 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: CLIENT_URL 
+        origin: CLIENT_URL
     }
 });
 
 app.use(cors());
 app.use(morganMiddleware);
 
-app.get("/game", async (_, res: Response) => {
+app.get("/api/game", async (_, res: Response) => {
     res.send(Array.from(await redisClient.keys('*')));
 });
 
-app.post("/game", async (_, res: Response) => {
+app.post("/api/game", async (_, res: Response) => {
     const gameId = uuidv4().split("-")[0];
     redisClient.set(gameId, DEFAULT_HB_POSITION)
         .then(() => {

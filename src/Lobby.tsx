@@ -7,7 +7,7 @@ import { SERVER_URL } from "./constants";
 export default function Lobby() {
     const queryClient = useQueryClient();
     const { data: games, error: gamesError } = useQuery("games", () =>
-        fetch(`${SERVER_URL}/game`).then((res) => res.json())
+        fetch(`${SERVER_URL}/api/game`).then((res) => res.json())
     );
     const {
         mutate: createNewGame,
@@ -16,8 +16,8 @@ export default function Lobby() {
         error: newGameError,
     } = useMutation({
         mutationFn: async () => {
-            return fetch(`${SERVER_URL}/game`, { method: "POST" }).then((res) =>
-                res.json()
+            return fetch(`${SERVER_URL}/api/game`, { method: "POST" }).then(
+                (res) => res.json()
             );
         },
         onSuccess: () => queryClient.invalidateQueries(["games"]),
