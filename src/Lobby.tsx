@@ -16,8 +16,8 @@ export default function Lobby() {
         error: newGameError,
     } = useMutation({
         mutationFn: async () => {
-            return fetch(`${SERVER_URL}/game`, { method: "POST" }).then(
-                (res) => res.json()
+            return fetch(`${SERVER_URL}/game`, { method: "POST" }).then((res) =>
+                res.json()
             );
         },
         onSuccess: () => queryClient.invalidateQueries(["games"]),
@@ -35,7 +35,7 @@ export default function Lobby() {
             {newGameData && (
                 <p className="mt-2">
                     <CopyToClipboard
-                        text={`http://halfblindchess.com/game/${newGameData.gameId}`}
+                        text={`https://halfblindchess.com/game/${newGameData.gameId}`}
                         onCopy={() =>
                             document
                                 .querySelector(".copy-icon")
