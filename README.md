@@ -1,6 +1,8 @@
 # halfblindchess.com
 
-halfblindchess.com is a free, open-source chess server for the half-blind chess variant.
+https://halfblindchess.com is a free, open-source chess server for the half-blind chess variant.
+
+## Development
 
 The codebase is made of of two sections:
 

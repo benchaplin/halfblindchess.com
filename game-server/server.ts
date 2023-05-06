@@ -3,6 +3,7 @@ import http from "http";
 import cors from "cors";
 import { logger, morganMiddleware } from "./logger";
 import { Server, Socket } from "socket.io";
+import { CLIENT_URL } from "./constants";
 import { createClient } from "redis";
 import { HalfBlindChess, DEFAULT_HB_POSITION } from "halfblindchess";
 import { v4 as uuidv4 } from 'uuid';
@@ -20,7 +21,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173"
+        origin: CLIENT_URL 
     }
 });
 

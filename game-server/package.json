@@ -3,7 +3,8 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "dev": "ts-node-dev ./server.ts"
+        "dev": "ts-node-dev ./server.ts",
+        "build": "tsc"
     },
     "keywords": [],
     "author": "Ben Chaplin <benchaplin@protonmail.ch>",
