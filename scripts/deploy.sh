@@ -27,6 +27,11 @@ else
     NODE_ENV=production pm2 start ~/halfblindchess.com/game-server/dist/game-server/server.js --name halfblindchess-game-server
 fi
 
+sudo cp -r ~/halfblindchess.com/halfblindchess.com.conf /etc/nginx/sites-available
+if [[ ! -L "/etc/nginx/sites-enabled/halfblindchess.com.conf" ]]; then
+  sudo ln -s /etc/nginx/sites-available/halfblindchess.com.conf /etc/nginx/sites-enabled
+  echo "enabled halfblindchess.com..."
+fi
 sudo cp -r ~/halfblindchess.com/dist/* /var/www/halfblindchess.com/public_html/
 echo "restarting nginx..."
 sudo systemctl restart nginx
