@@ -1,6 +1,23 @@
 {
   "name": "halfblindchess.com",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "Ben Chaplin <benchaplin@protonmail.ch>",
+  "description": "A library for the half-blind chess variant",
+  "homepage": "https://github.com/benchaplin/halfblindchess.com",
+  "keywords": [
+      "half",
+      "blind",
+      "chess",
+      "half-blind",
+      "halfblind",
+      "halfblindchess",
+      "halfblindchess.com"
+  ],
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/benchaplin/halfblindchess.com.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

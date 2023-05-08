@@ -21,7 +21,14 @@ The codebase has two services:
     npm run dev
     ```
 
-Develop the app at http://localhost:5173.
+You will also need a local instance of redis running on port 6379. On OSX:
+
+```
+brew install redis
+redis-server
+```
+
+Develop the app at http://localhost:5173, the backend runs on http://localhost:3000.
 
 ## Deployment
 
