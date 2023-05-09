@@ -1,5 +1,5 @@
 import Nav from "./Nav.tsx";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 export default function App() {
     return (
@@ -9,7 +9,9 @@ export default function App() {
         >
             <Nav />
             <div style={{ width: 600 }}>
-                <h1 className="text-2xl mb-5">Half-Blind Chess</h1>
+                <Link to="/">
+                    <h1 className="text-2xl mb-5">Half-Blind Chess</h1>
+                </Link>
                 <Outlet />
             </div>
         </main>

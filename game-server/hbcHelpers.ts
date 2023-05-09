@@ -1,4 +1,4 @@
-import { Color, Key } from 'halfblindchessground/types';
+import { Color, Key } from "halfblindchessground/types";
 import { HalfBlindChess, HalfBlindMove, Square } from "halfblindchess";
 
 export function toDests(hbchess: HalfBlindChess): Map<Key, Key[]> {
