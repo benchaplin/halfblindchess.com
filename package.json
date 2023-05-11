@@ -1,53 +1,53 @@
 {
-  "name": "halfblindchess.com",
-  "version": "1.0.0",
-  "license": "MIT",
-  "author": "Ben Chaplin <benchaplin@protonmail.ch>",
-  "description": "A library for the half-blind chess variant",
-  "homepage": "https://github.com/benchaplin/halfblindchess.com",
-  "keywords": [
-      "half",
-      "blind",
-      "chess",
-      "half-blind",
-      "halfblind",
-      "halfblindchess",
-      "halfblindchess.com"
-  ],
-  "repository": {
-      "type": "git",
-      "url": "https://github.com/benchaplin/halfblindchess.com.git"
-  },
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "halfblindchess": "^1.0.8",
-    "halfblindchessground": "^0.1.1",
-    "react": "^18.2.0",
-    "react-copy-to-clipboard": "^5.1.0",
-    "react-dom": "^18.2.0",
-    "react-query": "^3.39.3",
-    "react-router-dom": "^6.11.0",
-    "socket.io-client": "^4.6.1"
-  },
-  "devDependencies": {
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "@typescript-eslint/eslint-plugin": "^5.57.1",
-    "@typescript-eslint/parser": "^5.57.1",
-    "@vitejs/plugin-react": "^4.0.0",
-    "autoprefixer": "^10.4.14",
-    "eslint": "^8.38.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.3.4",
-    "postcss": "^8.4.23",
-    "tailwindcss": "^3.3.2",
-    "typescript": "^5.0.4",
-    "vite": "^4.3.2"
-  }
+    "name": "halfblindchess.com",
+    "version": "1.0.0",
+    "license": "MIT",
+    "author": "Ben Chaplin <benchaplin@protonmail.ch>",
+    "description": "A library for the half-blind chess variant",
+    "homepage": "https://github.com/benchaplin/halfblindchess.com",
+    "keywords": [
+        "half",
+        "blind",
+        "chess",
+        "half-blind",
+        "halfblind",
+        "halfblindchess",
+        "halfblindchess.com"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/benchaplin/halfblindchess.com.git"
+    },
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "halfblindchess": "^1.0.8",
+        "halfblindchessground": "^0.1.1",
+        "react": "^18.2.0",
+        "react-copy-to-clipboard": "^5.1.0",
+        "react-dom": "^18.2.0",
+        "react-query": "^3.39.3",
+        "react-router-dom": "^6.11.0",
+        "socket.io-client": "^4.6.1"
+    },
+    "devDependencies": {
+        "@types/react": "^18.0.28",
+        "@types/react-dom": "^18.0.11",
+        "@typescript-eslint/eslint-plugin": "^5.57.1",
+        "@typescript-eslint/parser": "^5.57.1",
+        "@vitejs/plugin-react": "^4.0.0",
+        "autoprefixer": "^10.4.14",
+        "eslint": "^8.38.0",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "eslint-plugin-react-refresh": "^0.3.4",
+        "postcss": "^8.4.23",
+        "tailwindcss": "^3.3.2",
+        "typescript": "^5.0.4",
+        "vite": "^4.3.2"
+    }
 }

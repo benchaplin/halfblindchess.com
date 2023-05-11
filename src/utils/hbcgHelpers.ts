@@ -9,20 +9,20 @@ export function setupBoardDefault(ref: HTMLElement) {
     const chess = new HalfBlindChess();
     const cg = Chessground(ref, {
         movable: {
-            color: 'white',
+            color: "white",
             free: false,
             dests: toDests(chess),
         },
         draggable: {
-            showGhost: true
-        }
+            showGhost: true,
+        },
     });
     cg.set({
         movable: {
             events: {
-                after: playOtherSideDefault(cg, chess)
-            }
-        }
+                after: playOtherSideDefault(cg, chess),
+            },
+        },
     });
 }
 
@@ -33,15 +33,15 @@ export function playOtherSideDefault(cg: Api, chess: HalfBlindChess) {
             halfBlindMove: move.halfBlind
                 ? move
                 : typeof cg.state.halfBlindMove === "number"
-                    ? cg.state.halfBlindMove - 1
-                    : 1,
+                ? cg.state.halfBlindMove - 1
+                : 1,
         });
         cg.set({
             turnColor: toColor(chess),
             movable: {
                 color: toColor(chess),
-                dests: toDests(chess)
-            }
+                dests: toDests(chess),
+            },
         });
     };
 }
@@ -51,13 +51,16 @@ function toDests(chess: HalfBlindChess): Map<Key, Key[]> {
     chess.SQUARES.forEach((square: Square) => {
         const moves = chess.moves({ square, verbose: true });
         if (moves.length)
-            dests.set(square, moves.map((move: Move) => move.to));
+            dests.set(
+                square,
+                moves.map((move: Move) => move.to)
+            );
     });
     return dests;
 }
 
 function toColor(chess: HalfBlindChess): Color {
-    return (chess.turn() === 'w') ? 'white' : 'black';
+    return chess.turn() === "w" ? "white" : "black";
 }
 
 export function setupBoard(ref: HTMLElement, gameState: GameState): Api {
@@ -72,10 +75,11 @@ export function setupBoard(ref: HTMLElement, gameState: GameState): Api {
         },
         draggable: {
             showGhost: true,
-        }
+        },
     });
 
-    if (gameState.fen.split(" ")[0].length > 1) { // half-blind move
+    if (gameState.fen.split(" ")[0].length > 1) {
+        // half-blind move
         const fromSquare = gameState.fen.substring(0, 2) as Key;
         const piece = cg.state.pieces.get(fromSquare);
         cg.state.pieces.set(fromSquare, { ...piece, halfBlind: true });
@@ -95,7 +99,7 @@ export function setupAfterMoveEvt(cg: Api, socket: Socket, gameId: string) {
 
 function playOtherSide(socket: Socket, gameId: string) {
     return (orig: Key, dest: Key) => {
-        console.log(`emitting move: ${orig} to ${dest}`)
-        socket.emit('move', { gameId, orig, dest });
+        console.log(`emitting move: ${orig} to ${dest}`);
+        socket.emit("move", { gameId, orig, dest });
     };
 }
