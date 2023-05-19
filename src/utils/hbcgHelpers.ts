@@ -87,19 +87,24 @@ export function setupBoard(ref: HTMLElement, gameState: GameState): Api {
     return cg;
 }
 
-export function setupAfterMoveEvt(cg: Api, socket: Socket, gameId: string) {
+export function setupAfterMoveEvt(
+    cg: Api,
+    socket: Socket,
+    gameId: string,
+    playerId: string
+) {
     cg.set({
         movable: {
             events: {
-                after: playOtherSide(socket, gameId),
+                after: playOtherSide(socket, gameId, playerId),
             },
         },
     });
 }
 
-function playOtherSide(socket: Socket, gameId: string) {
+function playOtherSide(socket: Socket, gameId: string, playerId: string) {
     return (orig: Key, dest: Key) => {
-        console.log(`emitting move: ${orig} to ${dest}`);
-        socket.emit("move", { gameId, orig, dest });
+        console.log(`player ${playerId} emitting move: ${orig} to ${dest}`);
+        socket.emit("move", { gameId, playerId, orig, dest });
     };
 }

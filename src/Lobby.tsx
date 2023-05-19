@@ -16,11 +16,19 @@ export default function Lobby() {
         error: newGameError,
     } = useMutation({
         mutationFn: async () => {
-            return fetch(`${SERVER_URL}/api/game`, { method: "POST" }).then(
-                (res) => res.json()
-            );
+            return fetch(`${SERVER_URL}/api/game`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    playerId: localStorage.getItem("playerId"),
+                }),
+            }).then((res) => res.json());
         },
-        onSuccess: () => queryClient.invalidateQueries(["games"]),
+        onSuccess: () => {
+            queryClient.invalidateQueries(["games"]);
+        },
     });
 
     return (
