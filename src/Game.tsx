@@ -3,7 +3,8 @@ import { setupBoard, setupAfterMoveEvt } from "./utils/hbcgHelpers";
 import { socket } from "./socket";
 import { useParams } from "react-router-dom";
 import { StringifiableGameState } from "../types/gameTypes";
-import { Key } from "halfblindchessground/types";
+import { Color, Key } from "halfblindchessground/types";
+import NameBadge from "./components/NameBadge";
 
 export default function Game() {
     const { gameId } = useParams();
@@ -11,6 +12,8 @@ export default function Game() {
 
     const [player1, setPlayer1] = useState(null);
     const [player2, setPlayer2] = useState(null);
+
+    const [orientation, setOrientation] = useState("white");
 
     useEffect(() => {
         console.log("connecting");
@@ -22,8 +25,15 @@ export default function Game() {
         socket.on("gameState", (gameState: StringifiableGameState) => {
             console.log(`received gameState: ${JSON.stringify(gameState)}`);
             const dests: Map<Key, Key[]> = new Map(JSON.parse(gameState.dests));
+            const myOrientation: Color =
+                playerId === gameState.player2Id ? "black" : "white";
+            setOrientation(myOrientation);
             if (board.current !== null) {
-                const cg = setupBoard(board.current, { ...gameState, dests });
+                const cg = setupBoard(
+                    board.current,
+                    { ...gameState, dests },
+                    myOrientation
+                );
                 setupAfterMoveEvt(cg, socket, gameId, playerId);
             }
             setPlayer1(gameState.player1Id);
@@ -37,40 +47,14 @@ export default function Game() {
     }, [board]);
 
     return (
-        <div>
-            <h2 className={`text-l my-5 ${player2 && "font-bold"}`}>
-                {player2 ? (
-                    <>
-                        <img
-                            className="inline-block mr-2"
-                            src="../avatar_red.svg"
-                            width="20"
-                            alt=""
-                        />
-                        {player2}
-                    </>
-                ) : (
-                    <>
-                        <img
-                            className="inline-block mr-2"
-                            src="../avatar_empty.svg"
-                            width="20"
-                            alt=""
-                        />
-                        <i>waiting for opponent...</i>
-                    </>
-                )}
-            </h2>
+        <>
+            <div className="my-4">
+                <NameBadge color="red" name={player2} />
+            </div>
             <div ref={board} style={{ width: 500, height: 500 }} />
-            <h2 className="text-l font-bold my-5">
-                <img
-                    className="inline-block mr-2"
-                    src="../avatar_green.svg"
-                    width="20"
-                    alt=""
-                />
-                {player1}
-            </h2>
-        </div>
+            <div className="my-4">
+                <NameBadge color="green" name={player1} />
+            </div>
+        </>
     );
 }

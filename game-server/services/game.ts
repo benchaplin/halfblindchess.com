@@ -85,10 +85,10 @@ export default function registerGameSocketHandlers(
                 !(hbchess.turn() === "w" && playerId === game.player1Id) &&
                 !(hbchess.turn() === "b" && playerId === game.player2Id)
             ) {
-                // TODO: don't crash here
-                throw new Error(
+                logger.error(
                     `player ${playerId} is not allowed to move at this time in game ${gameId}`
                 );
+                return;
             }
 
             const moveRes = hbchess.move({ from: orig, to: dest });

@@ -8,8 +8,8 @@ export type Game = {
 };
 
 export type GameState = {
-    player1Id: string;
-    player2Id?: string;
+    player1Id: string; // white
+    player2Id?: string; // black
     fen: string;
     dests: Map<Key, Key[]>;
     color: Color;

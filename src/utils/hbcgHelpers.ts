@@ -63,9 +63,14 @@ function toColor(chess: HalfBlindChess): Color {
     return chess.turn() === "w" ? "white" : "black";
 }
 
-export function setupBoard(ref: HTMLElement, gameState: GameState): Api {
+export function setupBoard(
+    ref: HTMLElement,
+    gameState: GameState,
+    orientation: Color
+): Api {
     const normalFen = gameState.fen.split(" ").slice(1).join(" ");
     const cg = Chessground(ref, {
+        orientation,
         fen: normalFen,
         turnColor: gameState.color,
         movable: {
