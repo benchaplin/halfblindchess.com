@@ -66,13 +66,15 @@ function toColor(chess: HalfBlindChess): Color {
 export function setupBoard(
     ref: HTMLElement,
     gameState: GameState,
-    orientation: Color
+    orientation: Color,
+    viewOnly: boolean
 ): Api {
     const normalFen = gameState.fen.split(" ").slice(1).join(" ");
     const cg = Chessground(ref, {
         orientation,
         fen: normalFen,
         turnColor: gameState.turn,
+        viewOnly,
         movable: {
             color: gameState.turn,
             free: false,

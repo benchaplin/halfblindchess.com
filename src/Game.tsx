@@ -35,11 +35,14 @@ export default function Game() {
             const dests: Map<Key, Key[]> = new Map(JSON.parse(gameState.dests));
             const myOrientation: Color = myColor || "white";
             setOrientation(myOrientation);
+
+            const viewOnly = myColor !== gameState.turn;
             if (board.current !== null) {
                 const cg = setupBoard(
                     board.current,
                     { ...gameState, dests },
-                    myOrientation
+                    myOrientation,
+                    viewOnly
                 );
                 setupAfterMoveEvt(cg, socket, gameId, playerId);
             }
