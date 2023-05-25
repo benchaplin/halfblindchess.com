@@ -22,11 +22,18 @@ export default function Game() {
         const playerId = localStorage.getItem("playerId");
         socket.emit("joinGame", { gameId, playerId });
 
+        // move this
         socket.on("gameState", (gameState: StringifiableGameState) => {
             console.log(`received gameState: ${JSON.stringify(gameState)}`);
+            const myColor =
+                playerId === gameState.player1Id
+                    ? "white"
+                    : playerId === gameState.player2Id
+                    ? "black"
+                    : null;
+
             const dests: Map<Key, Key[]> = new Map(JSON.parse(gameState.dests));
-            const myOrientation: Color =
-                playerId === gameState.player2Id ? "black" : "white";
+            const myOrientation: Color = myColor || "white";
             setOrientation(myOrientation);
             if (board.current !== null) {
                 const cg = setupBoard(
@@ -49,11 +56,19 @@ export default function Game() {
     return (
         <>
             <div className="my-4">
-                <NameBadge color="red" name={player2} />
+                {orientation === "white" ? (
+                    <NameBadge color="red" name={player2} />
+                ) : (
+                    <NameBadge color="green" name={player1} />
+                )}
             </div>
             <div ref={board} style={{ width: 500, height: 500 }} />
             <div className="my-4">
-                <NameBadge color="green" name={player1} />
+                {orientation === "white" ? (
+                    <NameBadge color="green" name={player1} />
+                ) : (
+                    <NameBadge color="red" name={player2} />
+                )}
             </div>
         </>
     );

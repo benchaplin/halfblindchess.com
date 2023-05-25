@@ -12,7 +12,7 @@ export type GameState = {
     player2Id?: string; // black
     fen: string;
     dests: Map<Key, Key[]>;
-    color: Color;
+    turn: Color;
 };
 
 export type StringifiableGameState = {
@@ -20,5 +20,5 @@ export type StringifiableGameState = {
     player2Id?: string;
     fen: string;
     dests: string;
-    color: Color;
+    turn: Color;
 };

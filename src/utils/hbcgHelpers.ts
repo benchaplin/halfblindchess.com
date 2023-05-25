@@ -72,9 +72,9 @@ export function setupBoard(
     const cg = Chessground(ref, {
         orientation,
         fen: normalFen,
-        turnColor: gameState.color,
+        turnColor: gameState.turn,
         movable: {
-            color: gameState.color,
+            color: gameState.turn,
             free: false,
             dests: gameState.dests,
         },

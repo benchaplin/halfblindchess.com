@@ -1,7 +1,7 @@
 export default function About() {
     return (
         <div className="my-2">
-            <p>
+            <p className="mb-4">
                 halfblindchess.com is a free, open-source chess server for the
                 half-blind chess variant.
             </p>
