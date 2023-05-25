@@ -124,7 +124,7 @@ export default function registerGameSocketHandlers(
             player2Id: game.player2Id,
             fen: hbchess.halfBlindFen(),
             dests: JSON.stringify(Array.from(toDests(hbchess))),
-            color: toColor(hbchess),
+            turn: toColor(hbchess),
         };
         logger.info(
             `emitting gameState for ${gameId}: ${JSON.stringify(gameState)}`
@@ -142,7 +142,7 @@ export default function registerGameSocketHandlers(
             player2Id: game.player2Id,
             fen: hbchess.halfBlindFen(),
             dests: JSON.stringify(Array.from(toDests(hbchess))),
-            color: toColor(hbchess),
+            turn: toColor(hbchess),
         };
         logger.info(
             `sending gameState for ${gameId}: ${JSON.stringify(gameState)}`
