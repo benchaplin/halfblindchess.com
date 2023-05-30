@@ -15,6 +15,9 @@ export default function Game() {
 
     const [orientation, setOrientation] = useState("white");
 
+    const [winner, setWinner] = useState(null);
+    const [isDraw, setIsDraw] = useState(null);
+
     useEffect(() => {
         console.log("connecting");
         socket.connect();
@@ -46,8 +49,18 @@ export default function Game() {
                 );
                 setupAfterMoveEvt(cg, socket, gameId, playerId);
             }
+
             setPlayer1(gameState.player1Id);
             if (gameState.player2Id) setPlayer2(gameState.player2Id);
+
+            setWinner(
+                gameState.isCheckmate
+                    ? gameState.turn === "black"
+                        ? "White"
+                        : "Black"
+                    : null
+            );
+            setIsDraw(gameState.isDraw);
         });
 
         return () => {
@@ -66,6 +79,19 @@ export default function Game() {
                 )}
             </div>
             <div ref={board} style={{ width: 500, height: 500 }} />
+            {(winner || isDraw) && (
+                <div className="overlay-window">
+                    {winner ? (
+                        <p>
+                            Checkmate!
+                            <br />
+                            {winner} wins.
+                        </p>
+                    ) : (
+                        <p>Draw!</p>
+                    )}
+                </div>
+            )}
             <div className="my-4">
                 {orientation === "white" ? (
                     <NameBadge color="green" name={player1} />

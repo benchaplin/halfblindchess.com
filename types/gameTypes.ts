@@ -13,6 +13,8 @@ export type GameState = {
     fen: string;
     dests: Map<Key, Key[]>;
     turn: Color;
+    isCheckmate: boolean;
+    isDraw: boolean;
 };
 
 export type StringifiableGameState = {
@@ -21,4 +23,6 @@ export type StringifiableGameState = {
     fen: string;
     dests: string;
     turn: Color;
+    isCheckmate: boolean;
+    isDraw: boolean;
 };

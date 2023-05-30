@@ -5,7 +5,7 @@ import { RedisClientType } from "redis";
 import { HalfBlindChess, DEFAULT_HB_POSITION } from "halfblindchess";
 import { v4 as uuidv4 } from "uuid";
 import { toColor, toDests } from "../hbcHelpers";
-import { Game } from "../../types/gameTypes";
+import { Game, StringifiableGameState } from "../../types/gameTypes";
 
 export function registerGameEndpoints(
     app: Application,
@@ -119,12 +119,14 @@ export default function registerGameSocketHandlers(
         game: Game,
         hbchess: HalfBlindChess
     ) {
-        const gameState = {
+        const gameState: StringifiableGameState = {
             player1Id: game.player1Id,
             player2Id: game.player2Id,
             fen: hbchess.halfBlindFen(),
             dests: JSON.stringify(Array.from(toDests(hbchess))),
             turn: toColor(hbchess),
+            isCheckmate: hbchess.in_checkmate(),
+            isDraw: hbchess.in_draw(),
         };
         logger.info(
             `emitting gameState for ${gameId}: ${JSON.stringify(gameState)}`
@@ -137,12 +139,14 @@ export default function registerGameSocketHandlers(
         game: Game,
         hbchess: HalfBlindChess
     ) {
-        const gameState = {
+        const gameState: StringifiableGameState = {
             player1Id: game.player1Id,
             player2Id: game.player2Id,
             fen: hbchess.halfBlindFen(),
             dests: JSON.stringify(Array.from(toDests(hbchess))),
             turn: toColor(hbchess),
+            isCheckmate: hbchess.in_checkmate(),
+            isDraw: hbchess.in_draw(),
         };
         logger.info(
             `sending gameState for ${gameId}: ${JSON.stringify(gameState)}`

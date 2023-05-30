@@ -22,3 +22,24 @@
     animation-name: copied;
     animation-duration: 250ms;
 }
+
+.overlay-window {
+    position: relative;
+    margin-top: -500px;
+    width: 500px;
+    height: 500px;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlay-window p {
+    z-index: 100;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 24px;
+    text-align: center;
+}

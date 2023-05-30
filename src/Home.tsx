@@ -10,7 +10,6 @@ export default function Home() {
 
     return (
         <div className="my-2">
-            <div ref={board} style={{ width: 500, height: 500 }} />
             <p className="mt-5">
                 Half-blind chess is a chess variant with an element of surprise.
             </p>
@@ -30,6 +29,12 @@ export default function Home() {
                     has been made.
                 </li>
             </ul>
+            <p className="text-red-600 font-semibold mt-4">Try it out!</p>
+            <div
+                className="mt-3"
+                ref={board}
+                style={{ width: 500, height: 500 }}
+            />
         </div>
     );
 }
