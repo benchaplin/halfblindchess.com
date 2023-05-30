@@ -23,6 +23,7 @@ export default function Game() {
         socket.connect();
 
         const playerId = localStorage.getItem("playerId");
+        console.log(`joining game ${gameId}`);
         socket.emit("joinGame", { gameId, playerId });
 
         // move this
@@ -73,9 +74,17 @@ export default function Game() {
         <>
             <div className="my-4">
                 {orientation === "white" ? (
-                    <NameBadge color="red" name={player2} />
+                    <NameBadge
+                        color="red"
+                        name={player2}
+                        winner={winner === "Black"}
+                    />
                 ) : (
-                    <NameBadge color="green" name={player1} />
+                    <NameBadge
+                        color="red"
+                        name={player1}
+                        winner={winner === "White"}
+                    />
                 )}
             </div>
             <div ref={board} style={{ width: 500, height: 500 }} />
@@ -94,9 +103,17 @@ export default function Game() {
             )}
             <div className="my-4">
                 {orientation === "white" ? (
-                    <NameBadge color="green" name={player1} />
+                    <NameBadge
+                        color="green"
+                        name={player1}
+                        winner={winner === "White"}
+                    />
                 ) : (
-                    <NameBadge color="red" name={player2} />
+                    <NameBadge
+                        color="green"
+                        name={player2}
+                        winner={winner === "Black"}
+                    />
                 )}
             </div>
         </>

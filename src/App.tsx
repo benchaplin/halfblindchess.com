@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Nav from "./Nav.tsx";
-import { Link, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 export default function App() {
     useEffect(() => {
@@ -17,9 +17,7 @@ export default function App() {
         >
             <Nav />
             <div style={{ width: 600 }}>
-                <Link to="/">
-                    <h1 className="text-2xl mb-5">Half-Blind Chess</h1>
-                </Link>
+                <h1 className="text-2xl mb-5">Half-Blind Chess</h1>
                 <Outlet />
             </div>
         </main>
