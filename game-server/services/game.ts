@@ -125,6 +125,7 @@ export default function registerGameSocketHandlers(
             fen: hbchess.halfBlindFen(),
             dests: JSON.stringify(Array.from(toDests(hbchess))),
             turn: toColor(hbchess),
+            isCheck: hbchess.in_check(),
             isCheckmate: hbchess.in_checkmate(),
             isDraw: hbchess.in_draw(),
         };
@@ -145,6 +146,7 @@ export default function registerGameSocketHandlers(
             fen: hbchess.halfBlindFen(),
             dests: JSON.stringify(Array.from(toDests(hbchess))),
             turn: toColor(hbchess),
+            isCheck: hbchess.in_check(),
             isCheckmate: hbchess.in_checkmate(),
             isDraw: hbchess.in_draw(),
         };

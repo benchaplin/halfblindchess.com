@@ -6,12 +6,15 @@ import { HalfBlindChess, Move, Square } from "halfblindchess";
 import { GameState } from "../../types/gameTypes";
 
 export function setupBoardDefault(ref: HTMLElement) {
-    const chess = new HalfBlindChess();
+    const hbchess = new HalfBlindChess();
     const cg = Chessground(ref, {
         movable: {
             color: "white",
             free: false,
-            dests: toDests(chess),
+            dests: toDests(hbchess),
+        },
+        highlight: {
+            check: true,
         },
         draggable: {
             showGhost: true,
@@ -20,7 +23,7 @@ export function setupBoardDefault(ref: HTMLElement) {
     cg.set({
         movable: {
             events: {
-                after: playOtherSideDefault(cg, chess),
+                after: playOtherSideDefault(cg, hbchess),
             },
         },
     });
@@ -74,11 +77,15 @@ export function setupBoard(
         orientation,
         fen: normalFen,
         turnColor: gameState.turn,
+        check: gameState.isCheck,
         viewOnly,
         movable: {
             color: gameState.turn,
             free: false,
             dests: gameState.dests,
+        },
+        highlight: {
+            check: true,
         },
         draggable: {
             showGhost: true,
