@@ -28,7 +28,7 @@ brew install redis
 redis-server
 ```
 
-Develop the app at http://localhost:5173, the backend runs on http://localhost:3000.
+Develop the app at http://localhost:5173, the backend runs on http://localhost:3000. Redis can be accessed directly with `redis-cli`.
 
 ## Deployment
 
