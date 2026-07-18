@@ -23,6 +23,20 @@
     animation-duration: 250ms;
 }
 
+@keyframes drawFlash {
+    0%,
+    100% {
+        background-color: #fde047; /* yellow-300 */
+    }
+    50% {
+        background-color: #fef9c3; /* yellow-100 */
+    }
+}
+
+.draw-flash {
+    animation: drawFlash 0.9s ease-in-out infinite;
+}
+
 .overlay-window {
     position: relative;
     margin-top: -500px;

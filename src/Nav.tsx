@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
 
-export default function Nav() {
+type NavProps = {
+    username: string;
+    onEditName: () => void;
+};
+
+export default function Nav({ username, onEditName }: NavProps) {
     return (
         <div className="text-right" style={{ marginRight: 30 }}>
             <Link to="/">
@@ -22,6 +27,20 @@ export default function Nav() {
                     <Link to="/about">About</Link>
                 </li>
             </ul>
+            <div className="mt-4 text-xs">
+                {username ? (
+                    <>
+                        <div className="font-bold">{username}</div>
+                        <button className="link" onClick={onEditName}>
+                            edit
+                        </button>
+                    </>
+                ) : (
+                    <button className="link" onClick={onEditName}>
+                        set username
+                    </button>
+                )}
+            </div>
         </div>
     );
 }

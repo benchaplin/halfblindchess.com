@@ -14,21 +14,19 @@ export default function Home() {
                 Half-blind chess is a chess variant with an element of surprise.
             </p>
             <h2 className="text-xl font-bold my-5">Rules</h2>
-            <ul className="list-disc">
-                <li className="mb-2">
-                    Every third turn, starting with black's first move, a player
-                    makes a<b> half-blind move</b>.
-                </li>
-                <li className="mb-2">
-                    A <b>half-blind move</b> is a move in which the opposing
-                    player only sees which piece was moved, not where it was
-                    moved to.
-                </li>
-                <li className="ml-4">
-                    The position of the piece remains hidden until the next turn
-                    has been made.
-                </li>
-            </ul>
+
+            <p className="mb-2">
+                Every third turn, starting with black's first move, a player
+                makes a<b> half-blind move</b>.
+            </p>
+            <p className="mb-2">
+                A <b>half-blind move</b> is a move in which the opposing player
+                only sees which piece was moved, not where it was moved to.
+            </p>
+            <p>
+                The position of the piece remains hidden until the next turn has
+                been made.
+            </p>
             <p className="text-red-600 font-semibold mt-4">Try it out!</p>
             <div
                 className="mt-3"

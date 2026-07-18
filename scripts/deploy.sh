@@ -19,13 +19,14 @@ else
     echo "redis is running on port 6379"
 fi
 
-if pm2 status | grep -q "halfblindchess-game-server"; then
+if pm2 describe halfblindchess-game-server > /dev/null 2>&1; then
     echo "halfblindchess-game-server is already running, restarting..."
-    pm2 restart halfblindchess-game-server
+    pm2 restart halfblindchess-game-server --update-env
 else
     echo "halfblindchess-game-server is not running, starting..."
     NODE_ENV=production pm2 start ~/halfblindchess.com/game-server/dist/game-server/server.js --name halfblindchess-game-server
 fi
+pm2 save
 
 sudo cp -r ~/halfblindchess.com/halfblindchess.com.conf /etc/nginx/sites-available
 if [[ ! -L "/etc/nginx/sites-enabled/halfblindchess.com.conf" ]]; then

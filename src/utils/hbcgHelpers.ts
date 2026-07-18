@@ -93,10 +93,15 @@ export function setupBoard(
     });
 
     if (gameState.fen.split(" ")[0].length > 1) {
-        // half-blind move
+        // half-blind move: mark the moved piece so it renders faded ("ghost").
+        // The ghost class is only applied when re-rendering an *existing* piece
+        // node (render.ts), not when pieces are first created — so set the flag
+        // and then trigger an in-place re-render via set({}). (redrawAll() would
+        // rebuild the board and re-create the pieces, losing the ghost.)
         const fromSquare = gameState.fen.substring(0, 2) as Key;
         const piece = cg.state.pieces.get(fromSquare);
         cg.state.pieces.set(fromSquare, { ...piece, halfBlind: true });
+        cg.set({});
     }
     return cg;
 }

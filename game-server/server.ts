@@ -20,18 +20,23 @@ redisClient.on("ready", () =>
 
 // express/socket.io
 const app = express();
+// behind nginx in production: trust the first proxy so req.ip is the real
+// client (needed for per-IP rate limiting)
+app.set("trust proxy", 1);
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: CLIENT_URL,
     },
+    // our messages are tiny; cap payloads so a client can't send megabytes
+    maxHttpBufferSize: 16 * 1024, // 16 KB
 });
 
-app.use(bodyParser.json());
-app.use(cors());
+app.use(bodyParser.json({ limit: "16kb" }));
+app.use(cors({ origin: CLIENT_URL }));
 app.use(morganMiddleware);
 
-registerGameEndpoints(app, redisClient);
+registerGameEndpoints(app, io, redisClient);
 
 io.on("connection", (socket: Socket) => {
     logger.info("A user connected.");
@@ -41,6 +46,14 @@ io.on("connection", (socket: Socket) => {
     socket.on("disconnect", () => {
         logger.info("A user disconnected.");
     });
+});
+
+// Safety net: never let a stray async error take the whole server down.
+process.on("unhandledRejection", (reason) => {
+    logger.error(`unhandledRejection: ${reason}`);
+});
+process.on("uncaughtException", (err) => {
+    logger.error(`uncaughtException: ${err}`);
 });
 
 server.listen(3000, () => {
