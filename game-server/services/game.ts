@@ -2,23 +2,33 @@ import { Application, Request, Response } from "express";
 import { logger } from "../logger";
 import { Server, Socket } from "socket.io";
 import { RedisClientType } from "redis";
-import { HalfBlindChess, DEFAULT_HB_POSITION, Square } from "halfblindchess";
+import { HalfBlindChess, DEFAULT_HB_POSITION } from "halfblindchess";
 import { Color } from "halfblindchessground/types";
 import { v4 as uuidv4 } from "uuid";
 import { toColor, toDests } from "../hbcHelpers";
 import {
     Game,
     GameSummary,
+    MoveRecord,
     StringifiableGameState,
-    TimeControl,
 } from "../../types/gameTypes";
 import { scheduleFlagFall, clearFlagFall } from "./clock";
+import {
+    isSquare,
+    isValidGameId,
+    liveTimes,
+    MAX_ID_LEN,
+    normalizeTimeControl,
+    sanitizeId,
+    sanitizeUsername,
+    seatColor,
+    settleClockOnMove,
+    take,
+    toMoveViews,
+    type Bucket,
+} from "./logic";
 
 type Redis = RedisClientType<any, any, any>;
-
-const DEFAULT_TIME_CONTROL: TimeControl = { base: 300_000, increment: 0 };
-const MAX_BASE = 60 * 60_000; // 60 min
-const MAX_INCREMENT = 60_000; // 60 s
 
 // Rolling expiry so Redis self-cleans games. Refreshed on every write, so an
 // active game never expires mid-play (clocks cap at 60 min); a finished or
@@ -33,30 +43,8 @@ const userKey = (id: string) => `user:${id}`;
 // Set of non-finished game ids, so the lobby never needs redis.keys("*").
 const LOBBY_SET = "lobby:games";
 
-// Abuse limits.
-const MAX_USERNAME_LEN = 20;
-const MAX_ID_LEN = 64;
-const MAX_OPEN_GAMES = 500; // global cap on concurrent non-finished games
-
-// ---------------------------------------------------------------------------
-// Input validation / sanitizing (all socket + REST input is untrusted)
-// ---------------------------------------------------------------------------
-
-// Ids we mint are 8 hex chars; accept a little slack but keep them key-safe
-// and bounded so a client can't smuggle huge strings into keys/room names.
-const isValidGameId = (id: unknown): id is string =>
-    typeof id === "string" && /^[a-zA-Z0-9]{1,32}$/.test(id);
-
-const sanitizeId = (id: unknown): string | null =>
-    typeof id === "string" && id.length > 0 && id.length <= MAX_ID_LEN
-        ? id
-        : null;
-
-const sanitizeUsername = (u: unknown): string | undefined =>
-    typeof u === "string" ? u.trim().slice(0, MAX_USERNAME_LEN) || undefined : undefined;
-
-const isSquare = (s: unknown): s is Square =>
-    typeof s === "string" && /^[a-h][1-8]$/.test(s);
+// global cap on concurrent non-finished games (env-tunable for tests)
+const MAX_OPEN_GAMES = Number(process.env.MAX_OPEN_GAMES ?? 500);
 
 // ---------------------------------------------------------------------------
 // Redis helpers
@@ -86,49 +74,6 @@ async function upsertUser(redis: Redis, id?: string, username?: string) {
     });
 }
 
-function normalizeTimeControl(tc: any): TimeControl {
-    const base = Number(tc?.base);
-    const increment = Number(tc?.increment);
-    return {
-        base:
-            Number.isFinite(base) && base > 0
-                ? Math.min(base, MAX_BASE)
-                : DEFAULT_TIME_CONTROL.base,
-        increment:
-            Number.isFinite(increment) && increment >= 0
-                ? Math.min(increment, MAX_INCREMENT)
-                : DEFAULT_TIME_CONTROL.increment,
-    };
-}
-
-// ---------------------------------------------------------------------------
-// Clock helpers (server-authoritative, timestamp-based)
-// ---------------------------------------------------------------------------
-
-// Live time remaining for each player right now, accounting for time elapsed
-// on the clock of whoever is currently on move.
-function liveTimes(
-    game: Game,
-    turn: Color
-): { player1Time: number; player2Time: number } {
-    let { player1Time, player2Time } = game;
-    if (game.status === "active" && game.turnStartedAt != null) {
-        const elapsed = Date.now() - game.turnStartedAt;
-        if (turn === "white") {
-            player1Time = Math.max(0, player1Time - elapsed);
-        } else {
-            player2Time = Math.max(0, player2Time - elapsed);
-        }
-    }
-    return { player1Time, player2Time };
-}
-
-function seatColor(game: Game, playerId?: string): Color | null {
-    if (playerId && playerId === game.player1Id) return "white";
-    if (playerId && playerId === game.player2Id) return "black";
-    return null;
-}
-
 // The identity a socket established when it joined a game. Actions are
 // authorized by THIS, never by a player id sent in the action payload — so a
 // client can only ever act as the seat it actually joined as.
@@ -152,6 +97,7 @@ function buildGameState(game: Game): StringifiableGameState {
         player2Username: game.player2Username,
         player2Time,
         fen: hbchess.halfBlindFen(),
+        history: toMoveViews(game.history),
         dests: JSON.stringify(Array.from(toDests(hbchess))),
         turn,
         timeControl: game.timeControl,
@@ -292,23 +238,12 @@ async function broadcastPresence(io: Server, redis: Redis, gameId: string) {
 }
 
 // ---------------------------------------------------------------------------
-// Rate limiting (token buckets; refill in tokens/second, up to a burst)
+// Rate limiting (token buckets from ./logic; limits env-tunable for tests)
 // ---------------------------------------------------------------------------
 
-type Bucket = { tokens: number; last: number; strikes: number };
-
-function take(bucket: Bucket, rate: number, burst: number): boolean {
-    const now = Date.now();
-    bucket.tokens = Math.min(burst, bucket.tokens + ((now - bucket.last) / 1000) * rate);
-    bucket.last = now;
-    if (bucket.tokens < 1) return false;
-    bucket.tokens -= 1;
-    return true;
-}
-
 // Per-socket event limiter. Sustained flooding disconnects the socket.
-const SOCKET_RATE = 25; // events/sec sustained
-const SOCKET_BURST = 50;
+const SOCKET_RATE = Number(process.env.SOCKET_RATE ?? 25); // events/sec
+const SOCKET_BURST = Number(process.env.SOCKET_BURST ?? 50);
 function allowEvent(socket: Socket): boolean {
     const b: Bucket = (socket.data.rate ??= {
         tokens: SOCKET_BURST,
@@ -324,8 +259,8 @@ function allowEvent(socket: Socket): boolean {
 }
 
 // Per-IP REST limiter (in-memory). Coarse but enough to stop create/user spam.
-const REST_RATE = 1; // requests/sec sustained
-const REST_BURST = 20;
+const REST_RATE = Number(process.env.REST_RATE ?? 1); // requests/sec
+const REST_BURST = Number(process.env.REST_BURST ?? 20);
 const restBuckets = new Map<string, Bucket>();
 function restAllow(ip: string): boolean {
     let b = restBuckets.get(ip);
@@ -396,6 +331,7 @@ export function registerGameEndpoints(
             player1Time: timeControl.base,
             player2Time: timeControl.base,
             fen: DEFAULT_HB_POSITION,
+            history: [],
             timeControl,
             turnStartedAt: null,
             status: "waiting",
@@ -525,20 +461,18 @@ export default function registerGameSocketHandlers(
                 return;
             }
 
-            // settle the mover's clock: deduct elapsed, add increment
-            const now = Date.now();
-            const elapsed = game.turnStartedAt ? now - game.turnStartedAt : 0;
-            if (mover === "white") {
-                game.player1Time =
-                    Math.max(0, game.player1Time - elapsed) +
-                    game.timeControl.increment;
-            } else {
-                game.player2Time =
-                    Math.max(0, game.player2Time - elapsed) +
-                    game.timeControl.increment;
-            }
+            // record the move (full truth; redaction happens on send)
+            const record: MoveRecord = {
+                san: moveRes.san,
+                piece: moveRes.piece,
+                color: mover === "white" ? "w" : "b",
+                halfBlind: !!moveRes.halfBlind,
+            };
+            game.history = [...(game.history ?? []), record];
+
+            // settle the mover's clock (deduct elapsed, add increment)
+            settleClockOnMove(game, mover, Date.now());
             game.fen = hbchess.halfBlindFen();
-            game.turnStartedAt = now;
             game.drawOfferFrom = undefined; // a move implicitly declines any draw offer
 
             if (hbchess.in_checkmate()) {
@@ -660,6 +594,7 @@ export default function registerGameSocketHandlers(
                     player1Time: game.timeControl.base,
                     player2Time: game.timeControl.base,
                     fen: DEFAULT_HB_POSITION,
+                    history: [],
                     timeControl: game.timeControl,
                     turnStartedAt: null,
                     status: "waiting",

@@ -6,13 +6,33 @@
     @apply text-indigo-700 hover:text-indigo-900 hover:underline;
 }
 
+@layer components {
+    .btn {
+        @apply rounded py-2 px-3;
+    }
+
+    .btn-sm {
+        @apply py-1;
+    }
+
+    .btn-primary {
+        @apply bg-amber-600 text-white hover:bg-amber-800 disabled:opacity-50 disabled:hover:bg-amber-600;
+    }
+
+    .btn-secondary {
+        @apply bg-stone-200 hover:bg-neutral-400;
+    }
+}
+
 @keyframes copied {
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.2);
     }
+
     100% {
         transform: scale(1);
     }
@@ -24,17 +44,39 @@
 }
 
 @keyframes drawFlash {
+
     0%,
     100% {
-        background-color: #fde047; /* yellow-300 */
+        background-color: #fde047;
+        /* yellow-300 */
     }
+
     50% {
-        background-color: #fef9c3; /* yellow-100 */
+        background-color: #fef9c3;
+        /* yellow-100 */
     }
 }
 
 .draw-flash {
     animation: drawFlash 0.9s ease-in-out infinite;
+}
+
+@keyframes rematchFlash {
+
+    0%,
+    100% {
+        background-color: #85d19f;
+        /* green-200 */
+    }
+
+    50% {
+        background-color: #f0fdf4;
+        /* green-50 */
+    }
+}
+
+.rematch-flash {
+    animation: rematchFlash 0.9s ease-in-out infinite;
 }
 
 .overlay-window {

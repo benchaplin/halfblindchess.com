@@ -21,6 +21,7 @@ const myFormat = winston.format.combine(
 
 export const logger = winston.createLogger({
     level: "info",
+    silent: !!process.env.VITEST, // keep the test output clean
     format: winston.format.combine(winston.format.timestamp(), myFormat),
     defaultMeta: { service: "game-server" },
     transports:

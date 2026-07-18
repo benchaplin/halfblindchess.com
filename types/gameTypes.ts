@@ -8,6 +8,26 @@ export type TimeControl = {
 
 export type GameStatus = "waiting" | "active" | "finished";
 
+// A move as stored server-side (full truth, including the hidden destination).
+export type MoveRecord = {
+    san: string; // e.g. "e4", "Nf3"
+    piece: string; // p, n, b, r, q, k
+    color: "w" | "b";
+    halfBlind: boolean;
+};
+
+// A move as sent to clients. While a half-blind move is still hidden (it's the
+// latest move and no reply has been made), `san` is redacted to null so the
+// destination never crosses the wire — the opponent only learns which piece
+// moved. Once revealed, `san` is the real notation.
+export type MoveView = {
+    san: string | null;
+    piece: string;
+    color: "w" | "b";
+    halfBlind: boolean;
+    hidden: boolean;
+};
+
 // Result of a finished game.
 export type GameResult = "white" | "black" | "draw";
 
@@ -27,6 +47,7 @@ export type Game = {
     player2Username?: string;
     player2Time: number; // ms remaining as of turnStartedAt
     fen: string;
+    history: MoveRecord[];
     timeControl: TimeControl;
     turnStartedAt: number | null; // epoch ms when the current turn began; null unless active
     status: GameStatus;
@@ -73,6 +94,7 @@ type GameStateBase = {
     player2Username?: string; // black
     player2Time: number; // live ms remaining at emit time
     fen: string;
+    history: MoveView[];
     turn: Color;
     timeControl: TimeControl;
     status: GameStatus;

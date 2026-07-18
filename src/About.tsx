@@ -17,7 +17,8 @@ export default function About() {
                     >
                         https://github.com/benchaplin/halfblindchess.com
                     </a>{" "}
-                    - the React code for the web app, alongside the game server
+                    - the React code for the web app & the socket.io game
+                    server.
                 </li>
                 <li className="mb-2">
                     <a
@@ -26,7 +27,7 @@ export default function About() {
                     >
                         https://github.com/benchaplin/halfblindchess
                     </a>{" "}
-                    - the half-blind chess logic, built on top of chess.js
+                    - the half-blind chess logic (built on top of chess.js).
                 </li>
                 <li className="mb-2">
                     <a
@@ -39,7 +40,7 @@ export default function About() {
                     <a href="https://lichess.org" className="link">
                         lichess.org
                     </a>
-                    's chessground
+                    's chessground.
                 </li>
             </ul>
         </div>

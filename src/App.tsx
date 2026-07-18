@@ -25,7 +25,7 @@ export default function App() {
             style={{ paddingTop: 200, paddingBottom: 200 }}
         >
             <Nav username={username} onEditName={() => setEditingName(true)} />
-            <div style={{ width: 600 }}>
+            <div style={{ width: 700 }}>
                 <h1 className="text-2xl mb-5">Half-Blind Chess</h1>
                 <Outlet />
             </div>

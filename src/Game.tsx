@@ -11,6 +11,7 @@ import {
 import { Color, Key } from "halfblindchessground/types";
 import NameBadge from "./components/NameBadge";
 import Clock from "./components/Clock";
+import MoveHistory from "./components/MoveHistory";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const REASON_TEXT: Record<EndReason, string> = {
@@ -117,14 +118,18 @@ export default function Game() {
     const topConnected =
         presence && topName !== undefined ? presence[topColor] : undefined;
     const bottomConnected =
-        presence && bottomName !== undefined ? presence[bottomColor] : undefined;
+        presence && bottomName !== undefined
+            ? presence[bottomColor]
+            : undefined;
     // for the rematch UI: is my opponent currently here? (assume yes until known)
     const opponentPresent = presence ? presence[opponentColor] : true;
 
     const resultText = () => {
         if (gameState.winner === "draw") {
             return `Draw by ${
-                gameState.endReason ? REASON_TEXT[gameState.endReason] : "agreement"
+                gameState.endReason
+                    ? REASON_TEXT[gameState.endReason]
+                    : "agreement"
             }.`;
         }
         if (gameState.winner) {
@@ -138,8 +143,11 @@ export default function Game() {
     };
 
     return (
-        <>
-            <div className="my-4 flex items-center justify-between">
+        <div>
+            <div
+                className="my-4 flex items-center justify-between"
+                style={{ width: 500 }}
+            >
                 <NameBadge
                     color="red"
                     name={topName}
@@ -151,13 +159,21 @@ export default function Game() {
                     active={active && gameState.turn === topColor}
                 />
             </div>
-            <div ref={board} style={{ width: 500, height: 500 }} />
-            {finished && (
-                <div className="overlay-window">
-                    <p>{resultText()}</p>
+            <div className="flex gap-4 items-start">
+                <div style={{ width: 500 }}>
+                    <div ref={board} style={{ width: 500, height: 500 }} />
+                    {finished && (
+                        <div className="overlay-window">
+                            <p>{resultText()}</p>
+                        </div>
+                    )}
                 </div>
-            )}
-            <div className="my-4 flex items-center justify-between">
+                <MoveHistory history={gameState.history} />
+            </div>
+            <div
+                className="my-4 flex items-center justify-between"
+                style={{ width: 500 }}
+            >
                 <NameBadge
                     color="green"
                     name={bottomName}
@@ -201,7 +217,7 @@ export default function Game() {
             {isPlayer && active && (
                 <div className="my-4 flex gap-2 items-center">
                     <button
-                        className="bg-stone-200 border border-solid border-slate-800 rounded py-2 px-3"
+                        className="btn btn-secondary"
                         onClick={() =>
                             socket.emit("resign", { gameId, playerId })
                         }
@@ -214,7 +230,7 @@ export default function Game() {
                                 Opponent offers a draw:
                             </span>
                             <button
-                                className="bg-white border border-solid border-slate-800 rounded py-1 px-3"
+                                className="btn btn-sm btn-secondary"
                                 onClick={() =>
                                     socket.emit("respondDraw", {
                                         gameId,
@@ -226,7 +242,7 @@ export default function Game() {
                                 Accept
                             </button>
                             <button
-                                className="bg-white border border-solid border-slate-800 rounded py-1 px-3"
+                                className="btn btn-sm btn-secondary"
                                 onClick={() =>
                                     socket.emit("respondDraw", {
                                         gameId,
@@ -239,12 +255,10 @@ export default function Game() {
                             </button>
                         </div>
                     ) : gameState.drawOfferFrom === myColor ? (
-                        <span className="text-sm italic">
-                            Draw offer sent…
-                        </span>
+                        <span className="text-sm italic">Draw offer sent…</span>
                     ) : (
                         <button
-                            className="bg-stone-200 border border-solid border-slate-800 rounded py-2 px-3"
+                            className="btn btn-secondary"
                             onClick={() =>
                                 socket.emit("offerDraw", { gameId, playerId })
                             }
@@ -255,52 +269,70 @@ export default function Game() {
                 </div>
             )}
 
-            {isPlayer && finished && (
-                <div className="my-4 flex gap-2 items-center">
-                    <button
-                        className="bg-amber-600 hover:bg-amber-800 text-white rounded py-2 px-3 disabled:opacity-50 disabled:hover:bg-amber-600"
-                        disabled={!opponentPresent}
-                        onClick={() =>
-                            socket.emit("rematch", { gameId, playerId })
-                        }
-                    >
-                        {gameState.rematchOfferFrom === opponentColor
-                            ? "Accept rematch"
-                            : "Rematch"}
-                    </button>
-                    <button
-                        className="bg-stone-200 border border-solid border-slate-800 rounded py-2 px-3"
-                        onClick={() => navigate("/game")}
-                    >
-                        Exit
-                    </button>
-                    {!opponentPresent ? (
-                        <span className="text-sm italic text-stone-500">
-                            Opponent left
-                        </span>
-                    ) : gameState.rematchOfferFrom === myColor ? (
-                        <span className="text-sm italic">
-                            Rematch offer sent…
-                        </span>
-                    ) : gameState.rematchOfferFrom === opponentColor ? (
-                        <span className="text-sm">
-                            Opponent wants a rematch
-                        </span>
-                    ) : null}
-                </div>
-            )}
+            {isPlayer &&
+                finished &&
+                (gameState.rematchOfferFrom === opponentColor ? (
+                    <div className="my-4">
+                        <div className="rematch-flash border border-solid border-slate-800 rounded py-2 px-3 inline-flex gap-2 items-center">
+                            <span className="text-sm font-bold">
+                                Opponent wants a rematch:
+                            </span>
+                            <button
+                                className="btn btn-sm btn-secondary"
+                                onClick={() =>
+                                    socket.emit("rematch", { gameId, playerId })
+                                }
+                            >
+                                Accept
+                            </button>
+                            <button
+                                className="btn btn-sm btn-secondary"
+                                onClick={() => navigate("/game")}
+                            >
+                                Exit
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="my-4 flex gap-2 items-center">
+                        <button
+                            className="btn btn-primary"
+                            disabled={!opponentPresent}
+                            onClick={() =>
+                                socket.emit("rematch", { gameId, playerId })
+                            }
+                        >
+                            Rematch
+                        </button>
+                        <button
+                            className="btn btn-secondary"
+                            onClick={() => navigate("/game")}
+                        >
+                            Exit
+                        </button>
+                        {!opponentPresent ? (
+                            <span className="text-sm italic text-stone-500">
+                                Opponent left
+                            </span>
+                        ) : gameState.rematchOfferFrom === myColor ? (
+                            <span className="text-sm italic">
+                                Rematch offer sent…
+                            </span>
+                        ) : null}
+                    </div>
+                ))}
 
             {!isPlayer && (
                 <div className="my-4">
                     <p className="text-sm italic mb-2">Spectating</p>
                     <button
-                        className="bg-stone-200 border border-solid border-slate-800 rounded py-2 px-3"
+                        className="btn btn-secondary"
                         onClick={() => navigate("/game")}
                     >
                         Leave
                     </button>
                 </div>
             )}
-        </>
+        </div>
     );
 }

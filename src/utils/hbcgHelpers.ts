@@ -4,6 +4,7 @@ import { Chessground } from "halfblindchessground";
 import { Socket } from "socket.io-client";
 import { HalfBlindChess, Move, Square } from "halfblindchess";
 import { GameState } from "../../types/gameTypes";
+import { halfBlindMoveFromFen, isHalfBlindDisplay } from "./halfblind";
 
 export function setupBoardDefault(ref: HTMLElement) {
     const hbchess = new HalfBlindChess();
@@ -73,12 +74,19 @@ export function setupBoard(
     viewOnly: boolean
 ): Api {
     const normalFen = gameState.fen.split(" ").slice(1).join(" ");
+    // Feed chessground the moves-until-next-half-blind count so that when it's
+    // 0 — the current move is half-blind — dropping a piece fades it in place
+    // at its origin instead of moving it to the destination and snapping back
+    // when the server state arrives.
+    const halfBlindMove = halfBlindMoveFromFen(gameState.fen);
+
     const cg = Chessground(ref, {
         orientation,
         fen: normalFen,
         turnColor: gameState.turn,
         check: gameState.isCheck,
         viewOnly,
+        halfBlindMove,
         movable: {
             color: gameState.turn,
             free: false,
@@ -92,7 +100,7 @@ export function setupBoard(
         },
     });
 
-    if (gameState.fen.split(" ")[0].length > 1) {
+    if (isHalfBlindDisplay(gameState.fen)) {
         // half-blind move: mark the moved piece so it renders faded ("ghost").
         // The ghost class is only applied when re-rendering an *existing* piece
         // node (render.ts), not when pieces are first created — so set the flag

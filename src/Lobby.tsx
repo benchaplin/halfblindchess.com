@@ -82,7 +82,7 @@ export default function Lobby() {
                 </select>
             </div>
             <button
-                className="bg-amber-600 hover:bg-amber-800 text-white rounded py-2 px-3"
+                className="btn btn-primary"
                 onClick={() => createNewGame()}
                 disabled={isCreatingNewGame}
             >

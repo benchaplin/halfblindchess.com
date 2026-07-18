@@ -57,14 +57,14 @@ export default function UsernameModal({
                 <div className="text-right">
                     {dismissable && (
                         <button
-                            className="mr-2 py-2 px-3"
+                            className="mr-2 btn btn-secondary"
                             onClick={onClose}
                         >
                             Cancel
                         </button>
                     )}
                     <button
-                        className="bg-amber-600 hover:bg-amber-800 text-white rounded py-2 px-3 disabled:opacity-50"
+                        className="btn btn-primary"
                         onClick={save}
                         disabled={!name.trim()}
                     >
